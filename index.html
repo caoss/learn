@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画板</title>
+  <style>
+    .draw-boar {
+      width: 300px;
+      margin: 30px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="draw-boar" style="border:2px solid #ccc">
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <hr>
+    <button onclick='beginDraw()'>画笔</button>
+    <button onclick="{ctx.clearRect(0,0,300,300)}">清空</button>
+    <button onclick="submitCanvas()">提交</button>
+    <hr>
+    <img src="" alt="">
+  </div>
+</body>
+<script>
+  var canvas = document.querySelector('#canvas')
+  var buttons = document.querySelectorAll('button')
+
+
+  ctx = canvas.getContext('2d');
+
+  beginDraw = function () {
+    if (buttons[0].style.backgroundColor === 'red') {
+      buttons[0].style.backgroundColor = ''
+      canvas.removeEventListener('mousedown', star)
+    } else {
+      buttons[0].style.backgroundColor = 'red'
+      canvas.addEventListener('mousedown', star)
+    }
+  }
+
+  canvas.onmouseup = function (e) {
+    canvas.removeEventListener('mouseleave', leave)
+    canvas.removeEventListener('mousemove', draw)
+  }
+
+  function star(e) {
+    ctx.beginPath()
+    ctx.lineWidth = '8.0'
+    ctx.lineJoin = 'round'
+    ctx.lineCap = 'round'
+    const {
+      offsetX: starX,
+      offsetY: starY
+    } = e
+    ctx.moveTo(starX, starY)
+    canvas.addEventListener('mousemove', draw)
+    canvas.addEventListener('mouseleave', leave)
+  }
+
+  function leave() {
+    canvas.removeEventListener('mouseleave', leave)
+    canvas.removeEventListener('mousemove', draw)
+  }
+
+  function draw(e) {
+    const {
+      offsetX: curX,
+      offsetY: curY
+    } = e
+    // console.log('curent : ' + curX + ':' + curY);
+    ctx.lineTo(curX, curY)
+    ctx.stroke()
+  }
+
+  // 提交
+  submitCanvas = function () {
+    var img = document.querySelector('img')
+    img.src = canvas.toDataURL('image/png')
+    img = null
+  }
+
+
+
+</script>
+
+</html>
