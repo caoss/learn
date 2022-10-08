@@ -19,7 +19,9 @@
 <script src="./dist/FileSaver.js"></script>
 <script src="./dist/jszip.min.js"></script>
 <script>
-    //先获取所有子节点，也就是img标签
+    
+    function dowloadZipIMGs(){
+  //先获取所有子节点，也就是img标签
     // var box = document.getElementById('picList').childNodes;
     var box = document.getElementById('picList').children;
     console.log("box", box);
@@ -140,6 +142,9 @@
             });
         }
     }
+    }
+
+  
 </script>
 
 </html>

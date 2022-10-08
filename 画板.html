@@ -78,6 +78,7 @@
 
   // 提交
   submitCanvas = function () {
+    console.log(  canvas.toDataURL('image/png') );
     var img = document.querySelector('img')
     img.src = canvas.toDataURL('image/png')
     img = null

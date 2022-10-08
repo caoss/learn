@@ -10,6 +10,7 @@
 
 <body>
   <canvas type="2d" id="canvas"></canvas>
+  <button onclick="submitCanvas()">提交</button>
 </body>
 <script>
   // 绘画数据
@@ -17,13 +18,13 @@
     // 图片
     { type: "img", url: "https://img.alicdn.com/tfs/TB1GvVMj2BNTKJjy0FdXXcPpVXa-520-280.jpg", left: 0, top: 0, width: 749, height: 547, },
     // 文字
-    { type: "text", text: "姓名", left: 210,right:0, top: 217, width: 500, textAlign: 'center' },
+    { type: "text", text: "姓名", left: 210, right: 0, top: 217, width: 500, textAlign: 'center' },
     // 文字
-    { type: "text", text: "班级", left: 375,right:0, top: 217, width: 500, textAlign: 'center' },
+    { type: "text", text: "班级", left: 375, right: 0, top: 217, width: 500, textAlign: 'center' },
     // 文字
-    { type: "text", text: "二", left: 500,right:0, top: 217, width: 500, textAlign: 'center' },
+    { type: "text", text: "二", left: 500, right: 0, top: 217, width: 500, textAlign: 'center' },
     // 文字
-    { type: "text", text: "好孩子", left: 280,right:0, top: 257, width: 500, textAlign: 'center' },
+    { type: "text", text: "好孩子", left: 280, right: 0, top: 257, width: 500, textAlign: 'center' },
   ]
   // 画布参数
   const option = { dom: "#canvas", params, width: 749, height: 547, dpr: 1 };
@@ -50,9 +51,10 @@
       if (!item.url) return;
       // 把图片数据resolve回去，这里是需要做同步处理的。  
       const img = new Image();
-      img.onload = () => resolve(img)
+      img.setAttribute("crossOrigin",'Anonymous')
       // img.src = item.url;
       img.src = './dist/jz.png';
+      img.onload = () => resolve(img)
     })
   }
 
@@ -70,7 +72,6 @@
     // 设置垂直对齐方式
     ctx.textBaseline = "middle";
     ctx.fillText(text, left, top);
-
   }
 
   // 绘制图片
@@ -99,7 +100,7 @@
     ctx.drawImage(img, left, top, width, height);
     ctx.restore()
   }
-  
+
   // 初始化
   async function onInitCanvas(obj) {
     let ctx = null;
@@ -115,7 +116,15 @@
     // 解析数据
     if (Array.isArray(params) && params.length) await parseParams(ctx, params);
   }
-    onInitCanvas(option)
+  onInitCanvas(option)
+
+  // 提交
+  submitCanvas = function () {
+    let canvas = document.querySelector('#canvas');
+    console.log(canvas.toDataURL('image/png'));
+  }
+
+
 </script>
 
 </html>
