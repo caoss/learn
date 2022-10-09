@@ -50,8 +50,7 @@ function App() {
     // 画布参数
     const option = { params, width: 500, height: 280, dpr: 1 };
     // 解析参数 
-    async function parseParams(ctx, params) {
-      let data = [];
+    async function parseParams(ctx, params,index) {
       for (let item of params) {
         let { type, url } = item;
         let obj = { ...item };
@@ -60,9 +59,12 @@ function App() {
           obj.img = await downloadImage(obj);
           drawImage(ctx, obj);
         }
-        if (type === 'text') drawText(ctx, obj)
+        if (type === 'text'){
+          // console.log( 'data[index]',index );
+          obj.text = data[index]['姓名']
+          drawText(ctx, obj)
+        } 
       }
-      return data;
     }
     // 下载图片
     async function downloadImage(item) {
@@ -131,7 +133,7 @@ function App() {
         ctx = canvas.getContext("2d");
       }
       // 解析数据
-      if (Array.isArray(params) && params.length) await parseParams(ctx, params);
+      if (Array.isArray(params) && params.length) await parseParams(ctx, params,obj.index);
     }
 
     for (let i = 0; i < data.length; i++) {
@@ -141,7 +143,7 @@ function App() {
       pic.id = 'img' + i;
       document.getElementById("canvasList").appendChild(canvas)
       document.getElementById("picList").appendChild(pic)
-      onInitCanvas({ dom: `#${canvas.id}`, ...option })
+      onInitCanvas({ dom: `#${canvas.id}`, ...option ,index:i})
     }
   }
 
