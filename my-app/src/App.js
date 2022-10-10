@@ -285,8 +285,7 @@ function App() {
       <div id="canvasList"></div>
       <input type='file' accept='.xlsx, .xls' onChange={onImportExcel} />
       <button onClick={submitCanvas}>提交</button>
-      <div id="picList">
-      </div>
+      <div id="picList" style={{display:"none"}}></div>
     </div>
   );
 }
