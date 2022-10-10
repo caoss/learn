@@ -73,7 +73,8 @@ function App() {
         // 把图片数据resolve回去，这里是需要做同步处理的。  
         const img = new Image();
         img.setAttribute("crossOrigin", 'Anonymous')
-        img.src = item.url;
+        // img.src = item.url;//网络图片
+        img.src = process.env.PUBLIC_URL + 'honor_certificate.jpg';//本地图片
         img.onload = () => resolve(img)
       })
     }
@@ -291,7 +292,6 @@ function App() {
 }
 
 export function Test() {
-  const zip = new JSZip();
   return (
     'test'
   )
