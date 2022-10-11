@@ -4,6 +4,8 @@ import * as XLSX from 'xlsx';
 import JSZip from "jszip";
 import { saveAs } from 'file-saver'
 function App() {
+
+  let users = [];
   const canvasWidth = 3437;
   const canvasHeight = 2551;
   const imgUrl = process.env.PUBLIC_URL + 'honor_certificate.jpg';
@@ -28,10 +30,11 @@ function App() {
             // break; // 如果只取第一张表，就取消注释这行
           }
         }
+        users = data;
         drawImgs(data);
       } catch (e) {
         // 这里可以抛出文件类型错误不正确的相关提示
-        console.log('文件类型不正确');
+        console.log('文件类型不正确', e);
         return;
       }
     };
@@ -141,9 +144,10 @@ function App() {
         ctx = canvas.getContext("2d");
       }
       // 解析数据
-      if (Array.isArray(params) && params.length) await parseParams(ctx, params, obj.index);
+      if (Array.isArray(params) && params.length) {
+        parseParams(ctx, params, obj.index);
+      }
     }
-
     for (let i = 0; i < data.length; i++) {
       let canvas = document.createElement("canvas")
       let pic = document.createElement("img")
@@ -153,15 +157,12 @@ function App() {
       document.getElementById("picList").appendChild(pic)
       onInitCanvas({ dom: `#${canvas.id}`, ...option, index: i })
     }
-    
   }
-
 
   const dowloadZipIMGs = (picList) => {
     //先获取所有子节点，也就是img标签
     // var box = document.getElementById('picList').childNodes;
     var box = document.getElementById(picList).children;
-    console.log("box", box);
     var imgList = []
     for (var i = 0; i < box.length; i++) {
       imgList.push(box[i].src)
@@ -173,6 +174,7 @@ function App() {
          * @param {string} imgKey  如果不是单纯的图片路径 需要传入路径的key
          */
     function downloadZipImage(imgArr, imgKey = '', downloadName = 'img') {
+      console.log('下载压缩图片……')
       if (!imgArr || !imgArr.length) {
         return;
       }
@@ -181,8 +183,8 @@ function App() {
       const imgFolder = zip.folder('images');
       let index = 0; //  判断加载了几张图片的标识
       for (let i = 0; i < imgArr.length; i++) {
+        downloadName = users[i]['姓名'];
         const itemImg = imgKey ? imgArr[i][imgKey] : imgArr[i];
-        console.log(itemImg, 'itemImg===')
         /**
          * 如果是Base64就不需要再做异步处理了
          */
@@ -265,14 +267,14 @@ function App() {
      */
     function setBase64Img(zip, imgFolder, base64, imgArr, index, downloadName) {
       base64 = base64.split('base64,')[1];
-      imgFolder.file(downloadName + '_' + index + '.png', base64, {
+      imgFolder.file( index +'_' +downloadName + '.png', base64, {
         base64: true
       });
       if (index === imgArr.length - 1) {
         zip.generateAsync({
           type: 'blob'
         }).then((blob) => {
-          saveAs(blob, downloadName + '.zip');
+          saveAs(blob, 'imgs.zip');
         });
       }
     }
@@ -280,11 +282,13 @@ function App() {
 
   // 提交
   const submitCanvas = () => {
+    console.log('正在Loading');
     var arr = document.querySelectorAll('canvas');
     var pics = document.querySelectorAll('img')
     for (let i = 0; i < arr.length; i++) {
       pics[i].src = arr[i].toDataURL('image/png');
     }
+    console.log('正在Loading2');
     dowloadZipIMGs('picList');
   }
 
@@ -300,6 +304,15 @@ function App() {
 }
 
 export function Test() {
+  // const test = async () => {
+  //   await new Promise((resolve, reject) => {
+  //     setTimeout(() => {
+  //       console.log("我是不是最开始执行")
+  //     }, 1000);
+  //   });
+  //   console.log('我什么时候执行');
+  // }
+  // test()
   return (
     ''
   )
