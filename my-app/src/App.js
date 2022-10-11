@@ -4,6 +4,9 @@ import * as XLSX from 'xlsx';
 import JSZip from "jszip";
 import { saveAs } from 'file-saver'
 function App() {
+  const canvasWidth = 3437;
+  const canvasHeight = 2551;
+  const imgUrl = process.env.PUBLIC_URL + 'honor_certificate.jpg';
 
   // 解析EXCEL
   const onImportExcel = file => {
@@ -43,12 +46,13 @@ function App() {
     // 绘画数据
     const params = [
       // 图片
-      { type: "img", url: "https://img.alicdn.com/tfs/TB1GvVMj2BNTKJjy0FdXXcPpVXa-520-280.jpg", left: 0, top: 0, width: 500, height: 280, },
+      { type: "img", url: "https://img.alicdn.com/tfs/TB1GvVMj2BNTKJjy0FdXXcPpVXa-520-280.jpg", left: 0, top: 0, width: canvasWidth, height: canvasHeight, },
       // 文字
       { type: "text", text: "姓名", left: 40, right: 0, top: 80, width: 500, textAlign: 'center' },
+      { type: "text", text: "奖项", left: 40, right: 0, top: 180, width: 500, textAlign: 'center' },
     ]
     // 画布参数
-    const option = { params, width: 500, height: 280, dpr: 1 };
+    const option = { params, width: canvasWidth, height: canvasHeight, dpr: 1 };
     // 解析参数 
     async function parseParams(ctx, params, index) {
       for (let item of params) {
@@ -60,8 +64,11 @@ function App() {
           drawImage(ctx, obj);
         }
         if (type === 'text') {
-          // console.log( 'data[index]',index );
-          obj.text = data[index]['姓名']
+          if (obj.text === '姓名') {
+            obj.text = data[index]['姓名']
+          } else {
+            obj.text = data[index]['奖项']
+          }
           drawText(ctx, obj)
         }
       }
@@ -74,7 +81,7 @@ function App() {
         const img = new Image();
         img.setAttribute("crossOrigin", 'Anonymous')
         // img.src = item.url;//网络图片
-        img.src = process.env.PUBLIC_URL + 'honor_certificate.jpg';//本地图片
+        img.src = imgUrl;//本地图片
         img.onload = () => resolve(img)
       })
     }
@@ -146,6 +153,7 @@ function App() {
       document.getElementById("picList").appendChild(pic)
       onInitCanvas({ dom: `#${canvas.id}`, ...option, index: i })
     }
+    
   }
 
 
@@ -283,17 +291,17 @@ function App() {
 
   return (
     <div className="App">
-      <div id="canvasList"></div>
+      <div id="canvasList" style={{ display: "none" }}></div>
       <input type='file' accept='.xlsx, .xls' onChange={onImportExcel} />
       <button onClick={submitCanvas}>提交</button>
-      <div id="picList" style={{display:"none"}}></div>
+      <div id="picList"></div>
     </div>
   );
 }
 
 export function Test() {
   return (
-    'test'
+    ''
   )
 }
 
