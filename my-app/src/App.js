@@ -8,8 +8,10 @@ function App() {
   const [loadTxt, setLoadTxt] = React.useState('');
   let users = [];
   let fileName = '';
-  const canvasWidth = 3437;
-  const canvasHeight = 2551;
+  // const canvasWidth = 3437;
+  // const canvasHeight = 2551;
+  const canvasWidth = 1718;
+  const canvasHeight = 1275;
   const imgUrl = process.env.PUBLIC_URL + 'honor_certificate.jpg';
 
   // 解析EXCEL
