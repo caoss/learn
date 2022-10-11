@@ -1,11 +1,13 @@
-import logo from './logo.svg';
+import React from "react";
 import './App.css';
 import * as XLSX from 'xlsx';
 import JSZip from "jszip";
 import { saveAs } from 'file-saver'
 function App() {
-
+  const [showLoading, setShowLoading] = React.useState(false);
+  const [loadTxt, setLoadTxt] = React.useState('');
   let users = [];
+  let fileName = '';
   const canvasWidth = 3437;
   const canvasHeight = 2551;
   const imgUrl = process.env.PUBLIC_URL + 'honor_certificate.jpg';
@@ -14,6 +16,8 @@ function App() {
   const onImportExcel = file => {
     // 获取上传的文件对象
     const { files } = file.target;
+    console.log('files', files)
+    fileName = files[0].name.split('.')[0];
     // 通过FileReader对象读取文件
     const fileReader = new FileReader();
     fileReader.onload = event => {
@@ -51,8 +55,8 @@ function App() {
       // 图片
       { type: "img", url: "https://img.alicdn.com/tfs/TB1GvVMj2BNTKJjy0FdXXcPpVXa-520-280.jpg", left: 0, top: 0, width: canvasWidth, height: canvasHeight, },
       // 文字
-      { type: "text", text: "姓名", left: 40, right: 0, top: 80, width: 500, textAlign: 'center' },
-      { type: "text", text: "奖项", left: 40, right: 0, top: 180, width: 500, textAlign: 'center' },
+      { type: "text", text: "姓名", left: 900, right: 0, top: 900, width: 580, textAlign: 'center' },
+      { type: "text", text: "奖项", left: 1580, right: 0, top: 1280, width: 300, textAlign: 'center' },
     ]
     // 画布参数
     const option = { params, width: canvasWidth, height: canvasHeight, dpr: 1 };
@@ -97,7 +101,7 @@ function App() {
       ctx.fillstyle = color;
       // 设置文本大小
       // ctx.font = font;
-      ctx.font = 'normal 30px "楷体"';;
+      ctx.font = 'normal 120px "楷体"';;
       // 设置水平对齐方式
       ctx.textAlign = textAlign || "center";
       // 设置垂直对齐方式
@@ -174,7 +178,6 @@ function App() {
          * @param {string} imgKey  如果不是单纯的图片路径 需要传入路径的key
          */
     function downloadZipImage(imgArr, imgKey = '', downloadName = 'img') {
-      console.log('下载压缩图片……')
       if (!imgArr || !imgArr.length) {
         return;
       }
@@ -267,14 +270,14 @@ function App() {
      */
     function setBase64Img(zip, imgFolder, base64, imgArr, index, downloadName) {
       base64 = base64.split('base64,')[1];
-      imgFolder.file( index +'_' +downloadName + '.png', base64, {
+      imgFolder.file(index + '_' + downloadName + '.png', base64, {
         base64: true
       });
       if (index === imgArr.length - 1) {
         zip.generateAsync({
           type: 'blob'
         }).then((blob) => {
-          saveAs(blob, 'imgs.zip');
+          saveAs(blob, fileName + '.zip');
         });
       }
     }
@@ -282,22 +285,27 @@ function App() {
 
   // 提交
   const submitCanvas = () => {
-    console.log('正在Loading');
-    var arr = document.querySelectorAll('canvas');
-    var pics = document.querySelectorAll('img')
-    for (let i = 0; i < arr.length; i++) {
-      pics[i].src = arr[i].toDataURL('image/png');
-    }
-    console.log('正在Loading2');
-    dowloadZipIMGs('picList');
+    setShowLoading(true)
+    setLoadTxt('渲染中请等待……');
+    const t = setTimeout(()=>{
+      clearTimeout(t);
+      var arr = document.querySelectorAll('canvas');
+      var pics = document.querySelectorAll('img')
+      for (let i = 0; i < arr.length; i++) {
+        pics[i].src = arr[i].toDataURL('image/png');
+      }
+      dowloadZipIMGs('picList');
+    },1000)
   }
 
 
   return (
     <div className="App">
-      <div id="canvasList" style={{ display: "none" }}></div>
+      <div id="canvasList"></div>
+      <p>选择EXCEL上传：</p>
       <input type='file' accept='.xlsx, .xls' onChange={onImportExcel} />
-      <button onClick={submitCanvas}>提交</button>
+      <button disabled={showLoading} onClick={submitCanvas}>提交</button>
+      <p>{loadTxt}</p>
       <div id="picList"></div>
     </div>
   );
