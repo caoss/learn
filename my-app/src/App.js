@@ -8,10 +8,9 @@ function App() {
   const [loadTxt, setLoadTxt] = React.useState('');
   let users = [];
   let fileName = '';
-  // const canvasWidth = 3437;
-  // const canvasHeight = 2551;
-  const canvasWidth = 1718;
-  const canvasHeight = 1275;
+  const multiple = 2;
+  const canvasWidth = 3437/multiple;
+  const canvasHeight = 2551/multiple;
   const imgUrl = process.env.PUBLIC_URL + 'honor_certificate.jpg';
 
   // 解析EXCEL
@@ -57,8 +56,8 @@ function App() {
       // 图片
       { type: "img", url: "https://img.alicdn.com/tfs/TB1GvVMj2BNTKJjy0FdXXcPpVXa-520-280.jpg", left: 0, top: 0, width: canvasWidth, height: canvasHeight, },
       // 文字
-      { type: "text", text: "姓名", left: 900, right: 0, top: 900, width: 580, textAlign: 'center' },
-      { type: "text", text: "奖项", left: 1580, right: 0, top: 1280, width: 300, textAlign: 'center' },
+      { type: "text", text: "姓名", left: 900/multiple, right: 0, top: 900/multiple, width: 580/multiple, textAlign: 'center' },
+      { type: "text", text: "奖项", left: 1590/multiple, right: 0, top: 1280/multiple, width: 300/multiple, textAlign: 'center' },
     ]
     // 画布参数
     const option = { params, width: canvasWidth, height: canvasHeight, dpr: 1 };
@@ -103,7 +102,8 @@ function App() {
       ctx.fillstyle = color;
       // 设置文本大小
       // ctx.font = font;
-      ctx.font = 'normal 120px "楷体"';;
+      // ctx.font = 'normal 120px "楷体"';
+      ctx.font = `normal ${120/multiple}px "楷体"`;
       // 设置水平对齐方式
       ctx.textAlign = textAlign || "center";
       // 设置垂直对齐方式
@@ -299,10 +299,9 @@ function App() {
       dowloadZipIMGs('picList');
     },1000)
   }
-
-
   return (
     <div className="App">
+      <a href={ process.env.PUBLIC_URL + '三年一班.xlsx' }>Excel模板下载</a>
       <div id="canvasList"></div>
       <p>选择EXCEL上传：</p>
       <input type='file' accept='.xlsx, .xls' onChange={onImportExcel} />
